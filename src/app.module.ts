@@ -1,8 +1,12 @@
 import { Module } from "@nestjs/common";
+import { AuthModule } from "./router/auth/auth.module";
 import { PrismaService } from "./prisma/prisma.service";
+import { UserModule } from "./router/user/user.module";
+import { TmdbModule } from "./tmdb/tmdb.module";
+import { FavoriteModule } from "./router/favorite/favorite.module";
 
 @Module({
-  imports: [],
+  imports: [AuthModule, UserModule, TmdbModule, FavoriteModule],
   controllers: [],
   providers: [PrismaService],
 })

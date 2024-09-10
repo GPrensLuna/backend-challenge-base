@@ -7,7 +7,8 @@ import { CreateFavoriteDto, RemoveFavoriteDto } from "./dto";
 @Controller("/favorites")
 export class FavoriteController {
   public constructor(private readonly favoritesService: FavoriteService) {}
-
+  //******************************************************************* */
+  // TODO: findAll
   @Get()
   @ApiOperation({ summary: "Obtener todos los favoritos de un usuario" })
   @ApiParam({ name: "userId", description: "ID del usuario", type: String })
@@ -25,7 +26,8 @@ export class FavoriteController {
   > {
     return this.favoritesService.findAll(userId);
   }
-
+  //******************************************************************* */
+  // TODO: create
   @Post()
   @ApiOperation({ summary: "Agregar un nuevo favorito para un usuario" })
   @ApiBody({
@@ -38,7 +40,8 @@ export class FavoriteController {
   public async create(@Body() createFavoriteDto: CreateFavoriteDto): Promise<{ message: string }> {
     return this.favoritesService.create(createFavoriteDto);
   }
-
+  //******************************************************************* */
+  // TODO: remove
   @Delete()
   @ApiOperation({ summary: "Eliminar un favorito de un usuario" })
   @ApiBody({

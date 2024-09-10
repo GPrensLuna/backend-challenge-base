@@ -16,6 +16,9 @@ export class UserService {
   private readonly passwordValidationRegex =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?.&])[A-Za-z\d@$!%*?.&]{8,}$/;
   public constructor(private readonly db: PrismaService) {}
+
+  //******************************************************************* */
+  // TODO: create
   public async create(createUserDto: typeValidate.CreateUserDto): Promise<{ message: string }> {
     this.validateEmail(createUserDto.email);
     this.validatePassword(createUserDto.password);
@@ -30,6 +33,49 @@ export class UserService {
 
     return { message: "Usuario registrado con éxito." };
   }
+
+  //******************************************************************* */
+  // TODO: findAll
+  public findAll(): Promise<User[]> {
+    return this.db.user.findMany();
+  }
+  //******************************************************************* */
+  // TODO: findOne
+  public async findOne(id: string): Promise<User> {
+    const user = await this.db.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException("El usuario no fue encontrado.");
+    }
+    return user;
+  }
+  //******************************************************************* */
+  // TODO: update
+  public async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
+    const updatedUser = await this.db.user.update({
+      where: { id },
+      data: updateUserDto,
+    });
+    if (!updatedUser as boolean) {
+      throw new NotFoundException("El usuario no fue encontrado.");
+    }
+    return updatedUser;
+  }
+  //******************************************************************* */
+  // TODO: remove
+  public async remove(id: string): Promise<{ message: string }> {
+    const user = await this.db.user.update({
+      where: { id },
+      data: {
+        delete: true,
+      },
+    });
+    if (!user as boolean) {
+      throw new NotFoundException("El usuario no fue encontrado.");
+    }
+    return { message: "Usuario eliminado con éxito." };
+  }
+  //******************************************************************* */
+  // TODO: private
   private async ensureUniqueUser(email: string, username: string): Promise<void> {
     const userExists = await this.db.user.findFirst({
       where: {
@@ -59,40 +105,5 @@ export class UserService {
         "La contraseña debe contener al menos una letra, una mayúscula, un número y un símbolo.",
       );
     }
-  }
-  public findAll(): Promise<User[]> {
-    return this.db.user.findMany();
-  }
-
-  public async findOne(id: string): Promise<User> {
-    const user = await this.db.user.findUnique({ where: { id } });
-    if (!user) {
-      throw new NotFoundException("El usuario no fue encontrado.");
-    }
-    return user;
-  }
-
-  public async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-    const updatedUser = await this.db.user.update({
-      where: { id },
-      data: updateUserDto,
-    });
-    if (!updatedUser as boolean) {
-      throw new NotFoundException("El usuario no fue encontrado.");
-    }
-    return updatedUser;
-  }
-
-  public async remove(id: string): Promise<{ message: string }> {
-    const user = await this.db.user.update({
-      where: { id },
-      data: {
-        delete: true,
-      },
-    });
-    if (!user as boolean) {
-      throw new NotFoundException("El usuario no fue encontrado.");
-    }
-    return { message: "Usuario eliminado con éxito." };
   }
 }

@@ -6,6 +6,8 @@ import type { CreateFavoriteDto, RemoveFavoriteDto } from "./dto";
 export class FavoriteService {
   public constructor(private readonly db: PrismaService) {}
 
+  //******************************************************************* */
+  // TODO: findAll
   public async findAll(userId: string): Promise<
     {
       id: string;
@@ -19,7 +21,8 @@ export class FavoriteService {
       where: { userId },
     });
   }
-
+  //******************************************************************* */
+  // TODO: create
   public async create(createFavoriteDto: CreateFavoriteDto): Promise<{ message: string }> {
     const { title, movieId, userId } = createFavoriteDto;
     await this.db.favorite.create({
@@ -27,7 +30,8 @@ export class FavoriteService {
     });
     return { message: "Película agregada con éxito a favoritos" };
   }
-
+  //******************************************************************* */
+  // TODO: remove
   public async remove(removeFavoriteDto: RemoveFavoriteDto): Promise<{ message: string }> {
     const { movieId, userId } = removeFavoriteDto;
 

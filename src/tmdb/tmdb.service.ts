@@ -1,32 +1,38 @@
-import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import fetch from "node-fetch";
 import type { MovieResponse, GenreResponse } from "./dto/tmdb.dto";
+import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 
 @Injectable()
 export class TmdbService {
   private readonly apiUrl = process.env.API_TMDB_URL;
   private readonly apiKey = process.env.TOKEN_ACCESS_API;
-
+  //******************************************************************* */
+  // TODO: getPopularMovies
   public async getPopularMovies(): Promise<MovieResponse> {
     return this.fetchData<MovieResponse>("/movie/popular");
   }
-
+  //******************************************************************* */
+  // TODO: getNowPlayingMovies
   public async getNowPlayingMovies(): Promise<MovieResponse> {
     return this.fetchData<MovieResponse>("/movie/now_playing");
   }
-
+  //******************************************************************* */
+  // TODO: getUpcomingMovies
   public async getUpcomingMovies(): Promise<MovieResponse> {
     return this.fetchData<MovieResponse>("/movie/upcoming");
   }
-
+  //******************************************************************* */
+  // TODO: getTopRatedMovies
   public async getTopRatedMovies(): Promise<MovieResponse> {
     return this.fetchData<MovieResponse>("/movie/top_rated");
   }
-
+  //******************************************************************* */
+  // TODO: getGenres
   public async getGenres(): Promise<GenreResponse> {
     return this.fetchData<GenreResponse>("/genre/movie/list");
   }
-
+  //******************************************************************* */
+  // TODO: private
   private async fetchData<T>(endpoint: string): Promise<T> {
     try {
       const response = await fetch(`${this.apiUrl}${endpoint}?api_key=${this.apiKey}`, {

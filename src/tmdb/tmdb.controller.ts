@@ -1,6 +1,6 @@
+import { TmdbService } from "./tmdb.service";
 import { Controller, Get } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { TmdbService } from "./tmdb.service";
 import { MovieResponse, GenreResponse } from "./dto/tmdb.dto";
 
 @ApiTags("movies")
