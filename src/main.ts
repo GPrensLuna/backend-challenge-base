@@ -1,9 +1,25 @@
 import { NestFactory } from "@nestjs/core";
 import { ValidationPipe } from "@nestjs/common";
 import { AppModule } from "./app/app.module";
+import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
+import cookieParser from "cookie-parser";
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  const config = new DocumentBuilder()
+    .setTitle("Auth Server")
+    .setDescription("Servidor de Autentificación de user")
+    .setVersion("1.0")
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup("api", app, document);
+  app.enableCors({
+    origin: "*",
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  });
+  app.useGlobalPipes(new ValidationPipe());
+  app.use(cookieParser());
   app.setGlobalPrefix("api/v1");
 
   app.useGlobalPipes(
@@ -13,7 +29,7 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
-  await app.listen(process.env.PORT || 3000);
+  await app.listen(process.env.PORT ?? 3000);
 }
 void bootstrap();
 
