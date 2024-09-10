@@ -17,6 +17,7 @@ module.exports = {
     node: true,
     jest: true,
   },
+  /* "prettier/prettier": { endofline: "auto" }, */
   ignorePatterns: [".eslintrc.js", "global.d.ts"],
   rules: {
     "unused-imports/no-unused-imports": "error",
@@ -111,4 +112,3 @@ module.exports = {
     ],
   },
 };
-
