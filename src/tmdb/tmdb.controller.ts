@@ -7,7 +7,8 @@ import { MovieResponse, GenreResponse } from "./dto/tmdb.dto";
 @Controller("movies")
 export class TmdbController {
   public constructor(private readonly tmdbService: TmdbService) {}
-
+  //******************************************************************* */
+  // TODO: popular
   @Get("/popular")
   @ApiOperation({ summary: "Retrieve a list of popular movies" })
   @ApiResponse({
@@ -22,7 +23,8 @@ export class TmdbController {
   public async getPopularMovies(): Promise<MovieResponse> {
     return this.tmdbService.getPopularMovies();
   }
-
+  //******************************************************************* */
+  // TODO: now_playing
   @Get("/now_playing")
   @ApiOperation({ summary: "Retrieve a list of movies currently playing in theaters" })
   @ApiResponse({
@@ -37,7 +39,8 @@ export class TmdbController {
   public async getNowPlayingMovies(): Promise<MovieResponse> {
     return this.tmdbService.getNowPlayingMovies();
   }
-
+  //******************************************************************* */
+  // TODO: upcoming
   @Get("/upcoming")
   @ApiOperation({ summary: "Retrieve a list of upcoming movies" })
   @ApiResponse({
@@ -52,7 +55,8 @@ export class TmdbController {
   public async getUpcomingMovies(): Promise<MovieResponse> {
     return this.tmdbService.getUpcomingMovies();
   }
-
+  //******************************************************************* */
+  // TODO: top_rated
   @Get("/top_rated")
   @ApiOperation({ summary: "Retrieve a list of top-rated movies" })
   @ApiResponse({
@@ -67,7 +71,8 @@ export class TmdbController {
   public async getTopRatedMovies(): Promise<MovieResponse> {
     return this.tmdbService.getTopRatedMovies();
   }
-
+  //******************************************************************* */
+  // TODO: genres
   @Get("/genres")
   @ApiOperation({ summary: "Retrieve a list of movie genres" })
   @ApiResponse({
