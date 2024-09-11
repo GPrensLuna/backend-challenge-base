@@ -8,7 +8,7 @@
   "scripts": {
      "mig": "pnpx prisma migrate dev",
     "gen": "pnpx prisma generate",
-    "prepare": "pnpx prisma migrate && pnpx prisma generate husky install",
+    "prepare": "husky install",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
