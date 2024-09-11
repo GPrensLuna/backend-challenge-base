@@ -19,62 +19,32 @@ export class TmdbService {
     }
   }
 
-  public async getPopularMovies(
-    page: string,
-    limit?: number,
-    filters?: Record<string, string>,
+  public async getMovies(
+    type: "popular" | "now_playing" | "upcoming" | "top_rated",
+    page: string = "1",
+    query?: string,
+    withGenres?: string,
   ): Promise<MovieResponse> {
-    return this.fetchData<MovieResponse>("/movie/popular", {
+    const endpoint = query ? "/search/movie" : `/movie/${type}`;
+    const params: Record<string, string> = {
       page,
-      ...(limit !== undefined && { limit: limit.toString() }),
-      ...filters,
-    });
+    };
+
+    if (query) params.query = query;
+    if (withGenres) params.with_genres = withGenres;
+
+    return this.fetchData<MovieResponse>(endpoint, params);
   }
 
-  public async getNowPlayingMovies(
-    page: string,
-    limit?: number,
-    filters?: Record<string, string>,
-  ): Promise<MovieResponse> {
-    return this.fetchData<MovieResponse>("/movie/now_playing", {
-      page,
-      ...(limit !== undefined && { limit: limit.toString() }),
-      ...filters,
-    });
-  }
-
-  public async getUpcomingMovies(
-    page: string,
-    limit?: number,
-    filters?: Record<string, string>,
-  ): Promise<MovieResponse> {
-    return this.fetchData<MovieResponse>("/movie/upcoming", {
-      page,
-      ...(limit !== undefined && { limit: limit.toString() }),
-      ...filters,
-    });
-  }
-
-  public async getTopRatedMovies(
-    page: string,
-    limit?: number,
-    filters?: Record<string, string>,
-  ): Promise<MovieResponse> {
-    return this.fetchData<MovieResponse>("/movie/top_rated", {
-      page,
-      ...(limit !== undefined && { limit: limit.toString() }),
-      ...filters,
-    });
-  }
-
-  public async getGenres(filters?: Record<string, string>): Promise<GenreResponse> {
-    return this.fetchData<GenreResponse>("/genre/movie/list", filters);
+  public async getGenres(): Promise<GenreResponse> {
+    return this.fetchData<GenreResponse>("/genre/movie/list");
   }
 
   private async fetchData<T>(endpoint: string, params?: Record<string, string>): Promise<T> {
     try {
       const queryString = params ? new URLSearchParams(params).toString() : "";
       const url = `${this.apiUrl}${endpoint}${queryString ? `?${queryString}` : ""}`;
+
       const response = await fetch(url, {
         method: "GET",
         headers: {

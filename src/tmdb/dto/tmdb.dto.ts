@@ -49,13 +49,19 @@ export class MovieResponse {
   public results: Movie[] = [];
 
   @ApiProperty()
-  public page: number = 0;
+  public page?: number = 1;
 
   @ApiProperty()
-  public total_results: number = 0;
+  public search?: string = "";
 
   @ApiProperty()
-  public total_pages: number = 0;
+  public withGenres?: number = 1;
+
+  @ApiProperty()
+  public total_results?: number = 0;
+
+  @ApiProperty()
+  public total_pages?: number = 0;
 }
 
 export class Genre {
