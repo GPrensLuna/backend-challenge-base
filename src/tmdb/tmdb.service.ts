@@ -1,10 +1,28 @@
+/* eslint-disable no-console */
+/* eslint-disable prettier/prettier */
 import type { MovieResponse, GenreResponse } from "./dto/tmdb.dto";
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class TmdbService {
-  private readonly apiUrl = process.env.API_TMDB_URL;
-  private readonly apiKey = process.env.TOKEN_ACCESS_API;
+  private readonly apiUrl: string;
+  private readonly apiKey: string;
+
+  public constructor(private readonly configService: ConfigService) {
+    const apiUrl = this.configService.get<string>("API_TMDB_URL");
+    const apiKey = this.configService.get<string>("TOKEN_ACCESS_API");
+
+    if (!apiUrl) {
+      throw new HttpException("API_TMDB_URL is not defined", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    if (!apiKey) {
+      throw new HttpException("TOKEN_ACCESS_API is not defined", HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    this.apiUrl = apiUrl;
+    this.apiKey = apiKey;
+  }
 
   //******************************************************************* */
   // TODO: getPopularMovies
@@ -37,17 +55,20 @@ export class TmdbService {
   }
 
   //******************************************************************* */
-  // TODO: private
+  // TODO: private fetchData
   private async fetchData<T>(endpoint: string): Promise<T> {
     try {
-      const fetch = await this.loadFetch(); // Importación dinámica de node-fetch
-      const response = await fetch(`${this.apiUrl}${endpoint}?api_key=${this.apiKey}`, {
-        method: "GET",
-        headers: { Accept: "application/json" },
-      });
+      const url = `${this.apiUrl}${endpoint}`;
 
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          accept: "application/json",
+          Authorization: `Bearer ${this.apiKey}`,
+        },
+      });
       if (!response.ok) {
-        throw new HttpException("Error communicating with TMDb API", HttpStatus.BAD_GATEWAY);
+        throw new HttpException("Invalid data format", HttpStatus.INTERNAL_SERVER_ERROR);
       }
 
       const data: unknown = await response.json();
@@ -58,43 +79,17 @@ export class TmdbService {
         throw new HttpException("Invalid data format", HttpStatus.INTERNAL_SERVER_ERROR);
       }
     } catch (error) {
-      throw new HttpException("Error fetching data", HttpStatus.INTERNAL_SERVER_ERROR);
+      if (error instanceof HttpException) {
+        throw error;
+      } else {
+        throw new HttpException("Error fetching data", HttpStatus.INTERNAL_SERVER_ERROR);
+      }
     }
-  }
-  private async loadFetch(): Promise<typeof fetch> {
-    const { default: fetch } = await import("node-fetch");
-    return fetch;
-  }
-
-  private isValidMovieResponse(data: unknown): data is MovieResponse {
-    return (
-      typeof data === "object" &&
-      data !== null &&
-      "results" in data &&
-      Array.isArray((data as MovieResponse).results) &&
-      "page" in data &&
-      "total_results" in data &&
-      "total_pages" in data
-    );
-  }
-
-  private isValidGenreResponse(data: unknown): data is GenreResponse {
-    return (
-      typeof data === "object" &&
-      data !== null &&
-      "genres" in data &&
-      Array.isArray((data as GenreResponse).genres)
-    );
   }
 
   private isValidResponse<T>(data: unknown): data is T {
-    if (data && typeof data === "object") {
-      if ("results" in data) {
-        return this.isValidMovieResponse(data as MovieResponse);
-      }
-      if ("genres" in data) {
-        return this.isValidGenreResponse(data as GenreResponse);
-      }
+    if (typeof data === "object" && data !== null) {
+      return true;
     }
     return false;
   }
