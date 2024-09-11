@@ -14,7 +14,7 @@ async function bootstrap(): Promise<void> {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup("api/v1", app, document);
   app.enableCors({
-    origin: [`${process.env.API_FROMTEND}`, `${process.env.API_DEVELOPER}`],
+    origin: [`${process.env.API_FRONTEND}`, `${process.env.API_DEVELOPER}`],
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   });
