@@ -6,8 +6,10 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "mig": "pnpx prisma migrate dev",
-    "gen": "pnpx prisma generate",
+  "mig": "pnpx prisma migrate dev",
+  "gen": "pnpx prisma generate",
+  "prisma:migrate": "pnpx prisma migrate deploy",
+  "prisma:generate": "pnpx prisma generate",
     "prepare": "husky install",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
@@ -20,9 +22,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json",
-    "prisma:migrate": "prisma migrate dev",
-    "prisma:generate": "prisma generate"
+    "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
     "@nestjs/axios": "^3.0.3",
