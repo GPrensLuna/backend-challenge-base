@@ -7,7 +7,7 @@ import {
 import type { UpdateUserDto } from "./dto/update-user.dto";
 import * as validator from "validator";
 import type * as typeValidate from "./dto";
-import { PrismaService } from "../../prisma/prisma.service";
+import { PrismaService } from "../prisma/prisma.service";
 import * as bcrypt from "bcryptjs";
 import type { User } from "@prisma/client";
 

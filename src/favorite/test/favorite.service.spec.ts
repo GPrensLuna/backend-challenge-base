@@ -2,10 +2,10 @@
 import * as request from "supertest";
 import { Test } from "@nestjs/testing";
 import type { TestingModule } from "@nestjs/testing";
-import { AppModule } from "../../../app.module";
+import { AppModule } from "../../app.module";
 import type { INestApplication } from "@nestjs/common";
-import { PrismaService } from "../../../prisma/prisma.service";
-import { RegisterDto, Movie } from "../../../data";
+import { PrismaService } from "../../prisma/prisma.service";
+import { RegisterDto, Movie } from "../../data";
 
 describe("Create (e2e)", () => {
   let app: INestApplication;

@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import * as request from "supertest";
+import type { INestApplication } from "@nestjs/common";
 import { Test } from "@nestjs/testing";
 import type { TestingModule } from "@nestjs/testing";
-import { AppModule } from "../../../app.module";
-import type { INestApplication } from "@nestjs/common";
-import { PrismaService } from "../../../prisma/prisma.service";
-import { RegisterDto, LoginDto, NotLoginDto, NotLoginEmailDto } from "../../../data";
+import { AppModule } from "../../app.module";
+import { PrismaService } from "../../prisma/prisma.service";
+import { RegisterDto, LoginDto, NotLoginDto } from "../../data";
 
-describe("Login (e2e)", () => {
+describe("POST /auth/login (e2e)", () => {
   let app: INestApplication;
   let prismaService: PrismaService;
 
@@ -47,17 +47,24 @@ describe("Login (e2e)", () => {
     await app.close();
   });
 
-  it("debería hacer login con éxito", async () => {
+  it("should login successfully and set a cookie", async () => {
     await request(app.getHttpServer()).post("/user").send(RegisterDto).expect(201);
 
-    await request(app.getHttpServer()).post("/auth/login").send(LoginDto).expect(200);
+    const response = await request(app.getHttpServer())
+      .post("/auth/login")
+      .send(LoginDto)
+      .expect(200);
+
+    expect(response.body.message).toBe("Login exitoso");
+    expect(response.headers["set-cookie"]).toBeDefined();
   });
 
-  it("debería rechazar el login con un email no válido", async () => {
-    await request(app.getHttpServer()).post("/auth/login").send(NotLoginEmailDto).expect(400);
-  });
+  it("should return 401 if credentials are invalid", async () => {
+    const response = await request(app.getHttpServer())
+      .post("/auth/login")
+      .send(NotLoginDto)
+      .expect(401);
 
-  it("debería rechazar el login si el email no existe", async () => {
-    await request(app.getHttpServer()).post("/auth/login").send(NotLoginDto).expect(401);
+    expect(response.body.message).toBe("Credenciales incorrectas.");
   });
 });

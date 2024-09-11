@@ -3,9 +3,9 @@ import { Test } from "@nestjs/testing";
 import type { TestingModule } from "@nestjs/testing";
 import type { INestApplication } from "@nestjs/common";
 import * as request from "supertest";
-import { PrismaService } from "../../../prisma/prisma.service";
-import { AppModule } from "../../../app.module";
-import { RegisterDto } from "../../../data";
+import { PrismaService } from "../../prisma/prisma.service";
+import { AppModule } from "../../app.module";
+import { RegisterDto } from "../../data";
 
 describe("POST /user(e2e)", () => {
   let app: INestApplication;
