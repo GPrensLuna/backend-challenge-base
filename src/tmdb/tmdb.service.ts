@@ -1,8 +1,6 @@
-/* eslint-disable no-console */
-/* eslint-disable prettier/prettier */
-import type { MovieResponse, GenreResponse } from "./dto/tmdb.dto";
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
+import type { MovieResponse, GenreResponse } from "./dto/tmdb.dto";
 
 @Injectable()
 export class TmdbService {
@@ -10,71 +8,92 @@ export class TmdbService {
   private readonly apiKey: string;
 
   public constructor(private readonly configService: ConfigService) {
-    const apiUrl = this.configService.get<string>("API_TMDB_URL");
-    const apiKey = this.configService.get<string>("TOKEN_ACCESS_API");
+    this.apiUrl = this.configService.get<string>("API_TMDB_URL")!;
+    this.apiKey = this.configService.get<string>("TOKEN_ACCESS_API")!;
 
-    if (!apiUrl) {
+    if (!this.apiUrl) {
       throw new HttpException("API_TMDB_URL is not defined", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-    if (!apiKey) {
+    if (!this.apiKey) {
       throw new HttpException("TOKEN_ACCESS_API is not defined", HttpStatus.INTERNAL_SERVER_ERROR);
     }
-
-    this.apiUrl = apiUrl;
-    this.apiKey = apiKey;
   }
 
-  //******************************************************************* */
-  // TODO: getPopularMovies
-  public async getPopularMovies(): Promise<MovieResponse> {
-    return this.fetchData<MovieResponse>("/movie/popular");
+  public async getPopularMovies(
+    page: string,
+    limit?: number,
+    filters?: Record<string, string>,
+  ): Promise<MovieResponse> {
+    return this.fetchData<MovieResponse>("/movie/popular", {
+      page,
+      ...(limit !== undefined && { limit: limit.toString() }),
+      ...filters,
+    });
   }
 
-  //******************************************************************* */
-  // TODO: getNowPlayingMovies
-  public async getNowPlayingMovies(): Promise<MovieResponse> {
-    return this.fetchData<MovieResponse>("/movie/now_playing");
+  public async getNowPlayingMovies(
+    page: string,
+    limit?: number,
+    filters?: Record<string, string>,
+  ): Promise<MovieResponse> {
+    return this.fetchData<MovieResponse>("/movie/now_playing", {
+      page,
+      ...(limit !== undefined && { limit: limit.toString() }),
+      ...filters,
+    });
   }
 
-  //******************************************************************* */
-  // TODO: getUpcomingMovies
-  public async getUpcomingMovies(): Promise<MovieResponse> {
-    return this.fetchData<MovieResponse>("/movie/upcoming");
+  public async getUpcomingMovies(
+    page: string,
+    limit?: number,
+    filters?: Record<string, string>,
+  ): Promise<MovieResponse> {
+    return this.fetchData<MovieResponse>("/movie/upcoming", {
+      page,
+      ...(limit !== undefined && { limit: limit.toString() }),
+      ...filters,
+    });
   }
 
-  //******************************************************************* */
-  // TODO: getTopRatedMovies
-  public async getTopRatedMovies(): Promise<MovieResponse> {
-    return this.fetchData<MovieResponse>("/movie/top_rated");
+  public async getTopRatedMovies(
+    page: string,
+    limit?: number,
+    filters?: Record<string, string>,
+  ): Promise<MovieResponse> {
+    return this.fetchData<MovieResponse>("/movie/top_rated", {
+      page,
+      ...(limit !== undefined && { limit: limit.toString() }),
+      ...filters,
+    });
   }
 
-  //******************************************************************* */
-  // TODO: getGenres
-  public async getGenres(): Promise<GenreResponse> {
-    return this.fetchData<GenreResponse>("/genre/movie/list");
+  public async getGenres(filters?: Record<string, string>): Promise<GenreResponse> {
+    return this.fetchData<GenreResponse>("/genre/movie/list", filters);
   }
 
-  //******************************************************************* */
-  // TODO: private fetchData
-  private async fetchData<T>(endpoint: string): Promise<T> {
+  private async fetchData<T>(endpoint: string, params?: Record<string, string>): Promise<T> {
     try {
-      const url = `${this.apiUrl}${endpoint}`;
-
+      const queryString = params ? new URLSearchParams(params).toString() : "";
+      const url = `${this.apiUrl}${endpoint}${queryString ? `?${queryString}` : ""}`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
-          accept: "application/json",
+          Accept: "application/json",
           Authorization: `Bearer ${this.apiKey}`,
         },
       });
+
       if (!response.ok) {
-        throw new HttpException("Invalid data format", HttpStatus.INTERNAL_SERVER_ERROR);
+        const errorMessage = await response.text();
+        throw new HttpException(
+          errorMessage || "Invalid data format",
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
       }
 
-      const data: unknown = await response.json();
-
+      const data = await response.json();
       if (this.isValidResponse<T>(data)) {
-        return data;
+        return data as T;
       } else {
         throw new HttpException("Invalid data format", HttpStatus.INTERNAL_SERVER_ERROR);
       }
@@ -88,9 +107,6 @@ export class TmdbService {
   }
 
   private isValidResponse<T>(data: unknown): data is T {
-    if (typeof data === "object" && data !== null) {
-      return true;
-    }
-    return false;
+    return typeof data === "object" && data !== null;
   }
 }
