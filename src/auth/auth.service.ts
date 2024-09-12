@@ -23,13 +23,11 @@ export class AuthService {
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
       throw new UnauthorizedException("Credenciales incorrectas.");
     }
-
     const payload = {
       id: user.id,
       username: user.username,
       email: user.email,
     };
-
     const accessToken = await this.jwtService.signAsync(payload);
 
     return {

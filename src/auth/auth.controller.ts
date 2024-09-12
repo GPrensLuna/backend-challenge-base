@@ -58,6 +58,7 @@ export class AuthController {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000,
+      sameSite: "lax",
     });
     return { message: "Login exitoso" };
   }
@@ -79,6 +80,7 @@ export class AuthController {
   @ApiCookieAuth()
   public async getProfile(@Request() req: AuthRequest): Promise<dtoType.UserDataDto> {
     const session = await req.user;
+
     return {
       id: session.id,
       email: session.email,
