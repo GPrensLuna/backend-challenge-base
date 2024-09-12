@@ -1,6 +1,6 @@
 import { Injectable, HttpException, HttpStatus } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
-import type { MovieResponse, GenreResponse } from "./dto/tmdb.dto";
+import type { MovieResponse, GenreResponse, MovieDetailResponse } from "./dto/tmdb.dto";
 
 @Injectable()
 export class TmdbService {
@@ -36,8 +36,26 @@ export class TmdbService {
     return this.fetchData<MovieResponse>(endpoint, params);
   }
 
+  public async getMoviesByGenre(
+    type: "popular" | "now_playing" | "upcoming" | "top_rated",
+    genreId: string,
+    page: string = "1",
+  ): Promise<MovieResponse> {
+    const endpoint = `/discover/movie`;
+    const params: Record<string, string> = {
+      page,
+      with_genres: genreId,
+    };
+
+    return this.fetchData<MovieResponse>(endpoint, params);
+  }
+
   public async getGenres(): Promise<GenreResponse> {
     return this.fetchData<GenreResponse>("/genre/movie/list");
+  }
+
+  public async getMovieDetails(movieId: string): Promise<MovieDetailResponse> {
+    return this.fetchData<MovieDetailResponse>(`/movie/${movieId}`);
   }
 
   private async fetchData<T>(endpoint: string, params?: Record<string, string>): Promise<T> {

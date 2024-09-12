@@ -1,7 +1,7 @@
 import { TmdbService } from "./tmdb.service";
 import { Controller, Get, Query, Param } from "@nestjs/common";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
-import { MovieResponse, GenreResponse } from "./dto/tmdb.dto";
+import { MovieResponse, GenreResponse, MovieDetailResponse } from "./dto/tmdb.dto";
 
 @ApiTags("movies")
 @Controller("movies")
@@ -44,4 +44,37 @@ export class TmdbController {
   }
 
   //******************************************************************* */
+  @Get("/:type/genero/:genreId")
+  @ApiOperation({ summary: "Retrieve a list of movies based on type and genre" })
+  @ApiResponse({
+    status: 200,
+    description: "List of movies retrieved successfully based on type and genre",
+    type: MovieResponse,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Internal server error",
+  })
+  public async getMoviesByGenre(
+    @Param("type") type: "popular" | "now_playing" | "upcoming" | "top_rated",
+    @Param("genreId") genreId: string,
+    @Query("page") page: string = "1",
+  ): Promise<MovieResponse> {
+    return this.tmdbService.getMoviesByGenre(type, genreId, page);
+  }
+  //******************************************************************* */
+  @Get("/detail/:id")
+  @ApiOperation({ summary: "Retrieve details of a movie by ID" })
+  @ApiResponse({
+    status: 200,
+    description: "Details of the movie retrieved successfully",
+    type: MovieDetailResponse,
+  })
+  @ApiResponse({
+    status: 500,
+    description: "Internal server error",
+  })
+  public async getMovieDetails(@Param("id") id: string): Promise<MovieDetailResponse> {
+    return this.tmdbService.getMovieDetails(id);
+  }
 }

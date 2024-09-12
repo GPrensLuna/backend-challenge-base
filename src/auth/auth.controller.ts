@@ -54,17 +54,14 @@ export class AuthController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<dtoType.UserResponseDto> {
     const jwt = await this.authService.login(loginDto);
-
     response.cookie("Authentication", jwt.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: 24 * 60 * 60 * 1000,
     });
-
     return { message: "Login exitoso" };
   }
   //******************************************************************* */
-
   //******************************************************************* */
   // TODO: Get Profile
   @UseGuards(AuthGuard)

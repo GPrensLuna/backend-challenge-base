@@ -76,3 +76,8 @@ export class GenreResponse {
   @ApiProperty({ type: [Genre] })
   public genres: Genre[] = [];
 }
+
+export class MovieDetailResponse {
+  @ApiProperty()
+  public movie!: Movie;
+}
