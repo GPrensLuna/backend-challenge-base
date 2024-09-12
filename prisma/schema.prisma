@@ -25,9 +25,22 @@ model User {
 }
 
 model Favorite {
-  id        String   @id @default(cuid())
-  title     String
-  movieId   String   @unique
+  idFavorite       String   @id @default(cuid())
+  id               Int      @unique
+  title            String
+  originalTitle    String
+  overview         String
+  releaseDate      DateTime
+  posterPath       String
+  backdropPath     String
+  voteAverage      Float
+  voteCount        Int
+  popularity       Float
+  genreIds         Int[]
+  originalLanguage String
+  video            Boolean
+  adult            Boolean
+
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])
   userId    String

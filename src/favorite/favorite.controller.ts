@@ -1,31 +1,14 @@
 import { Controller, Get, Post, Delete, Param, Body, HttpCode, HttpStatus } from "@nestjs/common";
-import { ApiTags, ApiOperation, ApiParam, ApiBody, ApiResponse } from "@nestjs/swagger";
+import { ApiTags, ApiOperation, ApiBody, ApiResponse, ApiParam } from "@nestjs/swagger";
 import { FavoriteService } from "./favorite.service";
 import { CreateFavoriteDto, RemoveFavoriteDto } from "./dto";
+import type { Favorite } from "@prisma/client";
 
-@ApiTags("Favorites")
-@Controller("/favorites")
+@ApiTags("favorite")
+@Controller("/favorite")
 export class FavoriteController {
   public constructor(private readonly favoritesService: FavoriteService) {}
-  //******************************************************************* */
-  // TODO: findAll
-  @Get()
-  @ApiOperation({ summary: "Obtener todos los favoritos de un usuario" })
-  @ApiParam({ name: "userId", description: "ID del usuario", type: String })
-  @ApiResponse({ status: 200, description: "Lista de favoritos del usuario." })
-  @ApiResponse({ status: 404, description: "No se encontraron favoritos." })
-  @HttpCode(HttpStatus.OK)
-  public async findAll(@Param("userId") userId: string): Promise<
-    {
-      id: string;
-      title: string;
-      movieId: string;
-      createdAt: Date;
-      userId: string;
-    }[]
-  > {
-    return this.favoritesService.findAll(userId);
-  }
+
   //******************************************************************* */
   // TODO: create
   @Post()
@@ -41,7 +24,7 @@ export class FavoriteController {
     return this.favoritesService.create(createFavoriteDto);
   }
   //******************************************************************* */
-  // TODO: remove
+  // TODO: Delete
   @Delete()
   @ApiOperation({ summary: "Eliminar un favorito de un usuario" })
   @ApiBody({
@@ -53,5 +36,16 @@ export class FavoriteController {
   @HttpCode(HttpStatus.OK)
   public async remove(@Body() removeFavoriteDto: RemoveFavoriteDto): Promise<{ message: string }> {
     return this.favoritesService.remove(removeFavoriteDto);
+  }
+  //******************************************************************* */
+  // TODO: Get
+  @Get(":userId")
+  @ApiOperation({ summary: "Obtener todos los favoritos de un usuario" })
+  @ApiParam({ name: "userId", description: "ID del usuario", type: String })
+  @ApiResponse({ status: 200, description: "Lista de favoritos del usuario." })
+  @ApiResponse({ status: 404, description: "No se encontraron favoritos." })
+  @HttpCode(HttpStatus.OK)
+  public async findAll(@Param("userId") userId: string): Promise<Favorite[]> {
+    return this.favoritesService.findAll(userId);
   }
 }

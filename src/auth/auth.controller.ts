@@ -24,6 +24,7 @@ import { AuthGuard } from "./auth.guard";
 import { LoginDto } from "./dto/login.dto";
 import * as dtoType from "./dto";
 import { AuthRequest } from "./interfaces/AuthRequest";
+import { UserDataDto } from "./dto";
 
 @ApiTags("auth")
 @Controller("auth")
@@ -74,12 +75,12 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: "Perfil del usuario recuperado con éxito.",
-    type: dtoType.UserDataDto,
+    type: UserDataDto,
   })
   @ApiResponse({ status: 401, description: "No autorizado. Token inválido o no proporcionado." })
   @ApiCookieAuth()
-  public async getProfile(@Request() req: AuthRequest): Promise<dtoType.UserDataDto> {
-    const session = await req.user;
+  public getProfile(@Request() req: AuthRequest): UserDataDto {
+    const session = req.user;
 
     return {
       id: session.id,

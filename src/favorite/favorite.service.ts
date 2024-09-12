@@ -1,22 +1,14 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import type { CreateFavoriteDto, RemoveFavoriteDto } from "./dto";
+import type { Favorite } from "@prisma/client";
 
 @Injectable()
 export class FavoriteService {
   public constructor(private readonly db: PrismaService) {}
-
   //******************************************************************* */
   // TODO: findAll
-  public async findAll(userId: string): Promise<
-    {
-      id: string;
-      title: string;
-      movieId: string;
-      createdAt: Date;
-      userId: string;
-    }[]
-  > {
+  public async findAll(userId: string): Promise<Favorite[]> {
     return this.db.favorite.findMany({
       where: { userId },
     });
@@ -24,10 +16,48 @@ export class FavoriteService {
   //******************************************************************* */
   // TODO: create
   public async create(createFavoriteDto: CreateFavoriteDto): Promise<{ message: string }> {
-    const { title, movieId, userId } = createFavoriteDto;
-    await this.db.favorite.create({
-      data: { movieId, title, userId },
+    const { userId, movie } = createFavoriteDto;
+
+    const userExists = await this.db.user.findUnique({
+      where: { id: userId },
     });
+
+    if (!userExists) {
+      throw new NotFoundException("Usuario no encontrado");
+    }
+
+    const movieExists = await this.db.favorite.findFirst({
+      where: {
+        userId,
+        id: movie.id,
+      },
+    });
+
+    if (movieExists) {
+      throw new ConflictException("La película ya está en los favoritos");
+    }
+
+    // Crear el nuevo favorito
+    await this.db.favorite.create({
+      data: {
+        userId: userId,
+        id: movie.id,
+        title: movie.title,
+        originalTitle: movie.original_title,
+        overview: movie.overview,
+        releaseDate: new Date(movie.release_date),
+        posterPath: movie.poster_path,
+        backdropPath: movie.backdrop_path,
+        voteAverage: movie.vote_average,
+        voteCount: movie.vote_count,
+        popularity: movie.popularity,
+        genreIds: movie.genre_ids,
+        originalLanguage: movie.original_language,
+        video: movie.video,
+        adult: movie.adult,
+      },
+    });
+
     return { message: "Película agregada con éxito a favoritos" };
   }
   //******************************************************************* */
@@ -37,7 +67,7 @@ export class FavoriteService {
 
     const favorite = await this.db.favorite.findFirst({
       where: {
-        movieId,
+        id: parseInt(movieId),
         userId,
       },
     });
