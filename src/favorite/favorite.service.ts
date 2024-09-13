@@ -63,7 +63,6 @@ export class FavoriteService {
   // TODO: remove
   public async remove(removeFavoriteDto: RemoveFavoriteDto): Promise<{ message: string }> {
     const { movieId, userId } = removeFavoriteDto;
-
     const favorite = await this.db.favorite.findFirst({
       where: {
         id: parseInt(movieId),
