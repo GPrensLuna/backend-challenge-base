@@ -12,6 +12,7 @@ export class AuthGuard implements CanActivate {
     const request = context.switchToHttp().getRequest<AuthRequest>();
 
     const authHeader = request.headers["authentication"] as string | undefined;
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       throw new UnauthorizedException("Token de autenticación no proporcionado.");
     }

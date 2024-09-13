@@ -8,7 +8,17 @@ import type { Favorite } from "@prisma/client";
 @Controller("/favorite")
 export class FavoriteController {
   public constructor(private readonly favoritesService: FavoriteService) {}
-
+  //******************************************************************* */
+  // TODO: Get
+  @Get()
+  @ApiOperation({ summary: "Obtener todos los favoritos de un usuario" })
+  @ApiParam({ name: "userId", description: "ID del usuario", type: String })
+  @ApiResponse({ status: 200, description: "Lista de favoritos del usuario." })
+  @ApiResponse({ status: 404, description: "No se encontraron favoritos." })
+  @HttpCode(HttpStatus.OK)
+  public async findAll(@Param("userId") userId: string): Promise<Favorite[]> {
+    return this.favoritesService.findAll(userId);
+  }
   //******************************************************************* */
   // TODO: create
   @Post()
@@ -36,16 +46,5 @@ export class FavoriteController {
   @HttpCode(HttpStatus.OK)
   public async remove(@Body() removeFavoriteDto: RemoveFavoriteDto): Promise<{ message: string }> {
     return this.favoritesService.remove(removeFavoriteDto);
-  }
-  //******************************************************************* */
-  // TODO: Get
-  @Get(":userId")
-  @ApiOperation({ summary: "Obtener todos los favoritos de un usuario" })
-  @ApiParam({ name: "userId", description: "ID del usuario", type: String })
-  @ApiResponse({ status: 200, description: "Lista de favoritos del usuario." })
-  @ApiResponse({ status: 404, description: "No se encontraron favoritos." })
-  @HttpCode(HttpStatus.OK)
-  public async findAll(@Param("userId") userId: string): Promise<Favorite[]> {
-    return this.favoritesService.findAll(userId);
   }
 }

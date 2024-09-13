@@ -37,22 +37,21 @@ export class FavoriteService {
       throw new ConflictException("La película ya está en los favoritos");
     }
 
-    // Crear el nuevo favorito
     await this.db.favorite.create({
       data: {
         userId: userId,
         id: movie.id,
         title: movie.title,
-        originalTitle: movie.original_title,
+        original_title: movie.original_title,
         overview: movie.overview,
-        releaseDate: new Date(movie.release_date),
-        posterPath: movie.poster_path,
-        backdropPath: movie.backdrop_path,
-        voteAverage: movie.vote_average,
-        voteCount: movie.vote_count,
+        release_date: new Date(movie.release_date),
+        poster_path: movie.poster_path,
+        backdrop_path: movie.backdrop_path,
+        vote_average: movie.vote_average,
+        vote_count: movie.vote_count,
         popularity: movie.popularity,
         genreIds: movie.genre_ids,
-        originalLanguage: movie.original_language,
+        original_language: movie.original_language,
         video: movie.video,
         adult: movie.adult,
       },

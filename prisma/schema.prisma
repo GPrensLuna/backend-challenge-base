@@ -25,21 +25,21 @@ model User {
 }
 
 model Favorite {
-  idFavorite       String   @id @default(cuid())
-  id               Int      @unique
-  title            String
-  originalTitle    String
-  overview         String
-  releaseDate      DateTime
-  posterPath       String
-  backdropPath     String
-  voteAverage      Float
-  voteCount        Int
-  popularity       Float
-  genreIds         Int[]
-  originalLanguage String
-  video            Boolean
-  adult            Boolean
+  idFavorite        String   @id @default(cuid())
+  id                Int      @unique
+  title             String
+  original_title    String
+  overview          String
+  release_date      DateTime
+  poster_path       String
+  backdrop_path     String
+  vote_average      Float
+  vote_count        Int
+  popularity        Float
+  genreIds          Int[]
+  original_language String
+  video             Boolean
+  adult             Boolean
 
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id])

@@ -81,7 +81,6 @@ export class AuthController {
   @ApiCookieAuth()
   public getProfile(@Request() req: AuthRequest): UserDataDto {
     const session = req.user;
-
     return {
       id: session.id,
       email: session.email,
